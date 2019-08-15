@@ -10,7 +10,8 @@
 #Attendance.destroy_all
 require 'faker'
 #Populate User DB
-20.times do
+
+4.times do
   u=User.new(
     first_name: Faker::Name.first_name, 
     last_name: Faker::Name.last_name, 
@@ -20,6 +21,31 @@ require 'faker'
   )
   u.save!
 end
+
 puts "User seed Ok"
 
+
+#Populate Event DB
+User.all.each do |user|
+  rand(1..3).times do
+    Event.create(
+      start_date: Faker::Time.between(from: DateTime.now, to: DateTime.now + 365),
+      duration: (rand(1..40) * 5).to_s,
+      title: [Faker::Music.band + " concert event", Faker::Restaurant.name + " dinner event", Faker::Company.name + " business event"].sample,
+      description: Faker::Quote.famous_last_words[20..1000],
+      price: rand(1..1000).to_s,
+      location: "Bordeaux",
+     
+    )
+  end
+end
+puts "Event seed Ok"
+
+#Populate Attendance DB
+Event.all.each do |event|
+  rand(1..5).times do
+    event.attendees << User.where.not(id: event.attendee_ids).sample
+  end
+end
+puts "Attendance seed Ok"
 
